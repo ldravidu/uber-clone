@@ -2,17 +2,45 @@ import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
+import { useSignIn } from "@clerk/clerk-expo";
 
 const SignIn = () => {
+  const { signIn, setActive, isLoaded } = useSignIn();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const onSignInPress = async () => {};
+  const onSignInPress = async () => {
+    if (!isLoaded) return;
+
+    // Start the sign-in process using the email and password provided
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: form.email,
+        password: form.password,
+      });
+
+      // If sign-in process is complete, set the created session as active
+      // and redirect the user
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/(root)/(tabs)/home");
+      } else {
+        // If the status isn't complete, check why. User might need to
+        // complete further steps.
+        console.error(JSON.stringify(signInAttempt, null, 2));
+      }
+    } catch (err) {
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.error(JSON.stringify(err, null, 2));
+    }
+  };
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -30,6 +58,9 @@ const SignIn = () => {
             placeholder="Enter your E-mail"
             icon={icons.email}
             value={form.email}
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="none"
             onChangeText={(value) => setForm({ ...form, email: value })}
           ></InputField>
           <InputField
@@ -37,6 +68,7 @@ const SignIn = () => {
             placeholder="Enter your password"
             icon={icons.lock}
             secureTextEntry={true}
+            autoComplete="current-password"
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           ></InputField>
@@ -51,7 +83,7 @@ const SignIn = () => {
 
           <Link
             href="/sign-up"
-            className="text-lg text-center text-general-200 mt-10"
+            className="text-base text-center text-general-200 mt-10"
           >
             <Text>Don't have an account? </Text>
             <Text className="text-primary-500">Sign Up</Text>
