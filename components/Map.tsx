@@ -1,7 +1,10 @@
-import { calculateRegion } from "@/lib/map";
+import { icons } from "@/constants";
+import { calculateRegion, generateMarkersFromData } from "@/lib/map";
 import { useDriverStore, useLocationStore } from "@/store";
+import { MarkerData } from "@/types/type";
+import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-import MapView, { PROVIDER_DEFAULT } from "react-native-maps";
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 
 const drivers = [
   {
@@ -60,12 +63,28 @@ const Map = () => {
 
   const { selectedDriver, setDrivers } = useDriverStore();
 
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+
   const region = calculateRegion({
     userLongitude,
     userLatitude,
     destinationLongitude,
     destinationLatitude,
   });
+
+  useEffect(() => {
+    if (Array.isArray(drivers)) {
+      if (!userLatitude || !userLongitude) return;
+
+      const newMarkers = generateMarkersFromData({
+        data: drivers,
+        userLatitude,
+        userLongitude,
+      });
+
+      setMarkers(newMarkers);
+    }
+  }, [drivers]);
 
   return (
     <MapView
@@ -76,7 +95,21 @@ const Map = () => {
       initialRegion={region}
       showsUserLocation={true}
       userInterfaceStyle="light"
-    ></MapView>
+    >
+      {markers.map((marker) => (
+        <Marker
+          key={marker.id}
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+          }}
+          title={marker.title}
+          image={
+            selectedDriver === marker.id ? icons.selectedMarker : icons.marker
+          }
+        ></Marker>
+      ))}
+    </MapView>
   );
 };
 
