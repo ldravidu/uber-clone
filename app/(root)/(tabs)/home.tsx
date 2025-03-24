@@ -5,7 +5,7 @@ import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
 import { useLocationStore } from "@/store";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -160,8 +160,14 @@ export default function HomeScreen() {
   const handleSignOut = () => {
     // signOut();
   };
-  const handleDestinationPress = () => {
-    // signOut();
+  const handleDestinationPress = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setDestinationLocation(location);
+
+    router.push("/(root)/find-ride");
   };
 
   useEffect(() => {
