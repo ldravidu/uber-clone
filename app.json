@@ -21,7 +21,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -33,6 +33,12 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#2f80ed"
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "origin": "https://uber.com/"
         }
       ]
     ],
