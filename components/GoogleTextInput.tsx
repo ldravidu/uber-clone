@@ -58,7 +58,6 @@ const GoogleTextInput = ({
       query={{
         key: googlePlacesApiKey,
         language: "en",
-        type: "(cities)",
       }}
       debounce={200}
       renderLeftButton={() => (

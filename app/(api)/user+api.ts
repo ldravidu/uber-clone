@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     if (!name || !email || !clerkId) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
