@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFetch } from "@/lib/fetch";
 
 const recentRides = [
   {
@@ -153,7 +154,7 @@ const recentRides = [
 export default function HomeScreen() {
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const { user } = useUser();
-  const loading = true;
+  const { data: recentRides, loading } = useFetch(`/(api)/ride/${user?.id}`);
 
   const { hasPermissions, setHasPermissions } = useState(false);
 
@@ -202,7 +203,7 @@ export default function HomeScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 100 }}
         ListEmptyComponent={() => (
-          <View className="flex flex-col items-center justify-center h-full">
+          <View className="flex flex-col items-center justify-center">
             {!loading ? (
               <>
                 <Image
