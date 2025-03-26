@@ -19,7 +19,7 @@ const Payment = ({
 }: PaymentProps) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const { userId } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const {
     userAddress,
@@ -153,7 +153,10 @@ const Payment = ({
 
       <ReactNativeModal
         isVisible={success}
-        onBackdropPress={() => setSuccess(false)}
+        onBackdropPress={() => {
+          setSuccess(false);
+          setLoading(false);
+        }}
       >
         <View className="flex flex-col items-center justify-center bg-white p-7 rounded-2xl">
           <Image source={images.check} className="w-28 h-28 mt-5" />
@@ -167,6 +170,7 @@ const Payment = ({
             title="Back Home"
             onPress={() => {
               setSuccess(false);
+              setLoading(false);
               router.push("/(root)/(tabs)/home");
             }}
             className="mt-5"
