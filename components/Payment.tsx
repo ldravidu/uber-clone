@@ -1,7 +1,7 @@
 import { Alert, View, Image, Text } from "react-native";
 import CustomButton from "./CustomButton";
 import { PaymentSheetError, useStripe } from "@stripe/stripe-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchAPI } from "@/lib/fetch";
 import { PaymentProps } from "@/types/type";
 import { useLocationStore } from "@/store";
@@ -19,6 +19,7 @@ const Payment = ({
 }: PaymentProps) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const { userId } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<boolean>(false);
   const {
     userAddress,
@@ -29,7 +30,29 @@ const Payment = ({
     destinationLongitude,
   } = useLocationStore();
 
+  const fetchPaymentSheetParams = async () => {
+    const response = await fetch("/(api)/(stripe)/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: fullName || email.split("@")[0],
+        email: email,
+        amount: amount,
+      }),
+    });
+    const { paymentIntent, ephemeralKey, customer } = await response.json();
+
+    return {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    };
+  };
   const initializePaymentSheet = async () => {
+    const { paymentIntent, ephemeralKey, customer } =
+      await fetchPaymentSheetParams();
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Uber Inc.",
       intentConfiguration: {
@@ -94,29 +117,36 @@ const Payment = ({
           }
         },
       },
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
       returnURL: "myapp://book-ride",
     });
     if (error) {
       console.error(error);
+    } else {
+      setLoading(true);
     }
   };
 
   const openPaymentSheet = async () => {
-    await initializePaymentSheet();
-
     const { error } = await presentPaymentSheet();
 
-    if (error.code === PaymentSheetError.Canceled) {
+    if (error && error.code === PaymentSheetError.Canceled) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       setSuccess(true);
     }
   };
 
+  useEffect(() => {
+    initializePaymentSheet();
+  }, []);
+
   return (
     <>
       <CustomButton
-        title="Confirm Ride"
+        title={loading ? "Loading..." : "Book Ride"}
         className="my-10"
         onPress={openPaymentSheet}
       />
