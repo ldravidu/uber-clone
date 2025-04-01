@@ -2,6 +2,19 @@
 
 A full-featured ride-hailing application built with Expo (React Native) that includes authentication, real-time location tracking, ride booking, and payments.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="./assets/screenshots/home-page-screenshot.png" width="250" alt="Home Screen"/></td>
+    <td><img src="./assets/screenshots/ride-page-screenshot.png" width="250" alt="Rides Screen"/></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/screenshots/onboarding-page1-screenshot.png" width="250" alt="Onboarding Screen"/></td>
+    <td><img src="./assets/screenshots/signin-page-screenshot.png" width="250" alt="Sign In Screen"/></td>
+  </tr>
+</table>
+
 ## Features
 
 - 🔐 Authentication with Clerk (Email + Google OAuth)
