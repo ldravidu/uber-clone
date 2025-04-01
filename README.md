@@ -1,50 +1,89 @@
-# Welcome to your Expo app 👋
+# Uber Clone
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A full-featured ride-hailing application built with Expo (React Native) that includes authentication, real-time location tracking, ride booking, and payments.
 
-## Get started
+## Features
 
-1. Install dependencies
+- 🔐 Authentication with Clerk (Email + Google OAuth)
+- 📍 Real-time location tracking with Expo Location
+- 🗺️ Google Maps integration for navigation
+- 💳 Stripe payment processing
+- 💬 Chat functionality
+- 🚗 Driver selection and ride booking
+- 📱 Beautiful UI with Tailwind CSS
+
+## Tech Stack
+
+- [Expo](https://expo.dev) - React Native framework
+- [Clerk](https://clerk.com) - Authentication and user management
+- [Google Maps API](https://developers.google.com/maps) - Maps and location services
+- [Stripe](https://stripe.com) - Payment processing
+- [NeonDB](https://neon.tech) - PostgreSQL database
+- [TailwindCSS](https://tailwindcss.com) - Styling
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Expo CLI
+- Valid API keys for:
+  - Clerk
+  - Google Maps
+  - Stripe
+  - NeonDB
+
+### Environment Setup
+
+1. Clone the repository
+2. Create a `.env` file in the root directory with the following variables:
+
+```bash
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+DATABASE_URL=your_neondb_url
+EXPO_PUBLIC_SERVER_URL=your_server_url
+EXPO_PUBLIC_GEOAPIFY_API_KEY=your_geoapify_key
+EXPO_PUBLIC_GOOGLE_API_KEY=your_google_maps_key
+EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+```
+
+### Installation
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Start the development server:
 
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. Run on your preferred platform:
+   - Press `a` for Android
+   - Press `i` for iOS
+   - Press `w` for web
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- `/app` - Main application code and routes
+  - `/(api)` - API routes for backend functionality
+  - `/(auth)` - Authentication related screens
+  - `/(root)` - Main app screens and tabs
+- `/components` - Reusable React components
+- `/constants` - App constants and assets
+- `/lib` - Utility functions and helpers
+- `/store` - Global state management with Zustand
+- `/types` - TypeScript type definitions
 
-## Get a fresh project
+## Contributing
 
-When you're ready, run:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```bash
-npm run reset-project
-```
+## License
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
