@@ -2,7 +2,6 @@ import { Alert, View, Image, Text } from "react-native";
 import CustomButton from "./CustomButton";
 import { PaymentSheetError, useStripe } from "@stripe/stripe-react-native";
 import { useEffect, useState } from "react";
-import { fetchAPI } from "@/lib/fetch";
 import { PaymentProps } from "@/types/type";
 import { useLocationStore } from "@/store";
 import { useAuth } from "@clerk/clerk-expo";
@@ -31,7 +30,6 @@ const Payment = ({
   } = useLocationStore();
 
   const fetchPaymentSheetParams = async () => {
-    console.log("Fetching payment sheet params");
     const response = await fetch("/(api)/(stripe)/create", {
       method: "POST",
       headers: {
@@ -52,7 +50,6 @@ const Payment = ({
     };
   };
   const initializePaymentSheet = async () => {
-    console.log("Initializing payment sheet");
     const { paymentIntent, ephemeralKey, customer } =
       await fetchPaymentSheetParams();
     const { error } = await initPaymentSheet({
@@ -63,7 +60,6 @@ const Payment = ({
           currencyCode: "USD",
         },
         confirmHandler: async (paymentMethod, _, intentCreationCallback) => {
-          console.log(paymentMethod, intentCreationCallback);
           if (paymentIntent.client_secret) {
             const response = await fetch("/(api)/(stripe)/pay", {
               method: "POST",
@@ -124,7 +120,6 @@ const Payment = ({
   };
 
   const openPaymentSheet = async () => {
-    console.log("Opening payment sheet");
     const { error } = await presentPaymentSheet();
 
     if (error && error.code === PaymentSheetError.Canceled) {
@@ -140,7 +135,7 @@ const Payment = ({
     if (success) {
       savePayment();
     }
-  }, [savePayment, success]);
+  }, [success]);
 
   useEffect(() => {
     initializePaymentSheet();
