@@ -1,8 +1,12 @@
 import { neon } from "@neondatabase/serverless";
 
 export async function GET(request: Request, { id }: { id: string }) {
-  if (!id)
+  if (!id) {
+    console.error("Missing required fields");
     return Response.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  console.log("Fetching recent rides for user with ID:", id);
 
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);

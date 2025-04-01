@@ -2,6 +2,7 @@ import { neon } from "@neondatabase/serverless";
 
 export async function POST(request: Request) {
   try {
+    console.log("Creating a new ride");
     const body = await request.json();
     const {
       origin_address,
@@ -30,11 +31,14 @@ export async function POST(request: Request) {
       !driver_id ||
       !user_id
     ) {
+      console.error("Missing required fields");
       return Response.json(
         { error: "Missing required fields" },
         { status: 400 },
       );
     }
+
+    console.log("Inserting data into recent_rides");
 
     const sql = neon(`${process.env.DATABASE_URL}`);
 

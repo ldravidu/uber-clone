@@ -31,6 +31,7 @@ const Payment = ({
   } = useLocationStore();
 
   const fetchPaymentSheetParams = async () => {
+    console.log("Fetching payment sheet params");
     const response = await fetch("/(api)/(stripe)/create", {
       method: "POST",
       headers: {
@@ -51,6 +52,7 @@ const Payment = ({
     };
   };
   const initializePaymentSheet = async () => {
+    console.log("Initializing payment sheet");
     const { paymentIntent, ephemeralKey, customer } =
       await fetchPaymentSheetParams();
     const { error } = await initPaymentSheet({
@@ -61,8 +63,9 @@ const Payment = ({
           currencyCode: "USD",
         },
         confirmHandler: async (paymentMethod, _, intentCreationCallback) => {
+          console.log(paymentMethod, intentCreationCallback);
           if (paymentIntent.client_secret) {
-            const { result } = await fetchAPI("/(api)/(stripe)/pay", {
+            const response = await fetch("/(api)/(stripe)/pay", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -73,27 +76,12 @@ const Payment = ({
                 customer_id: customer,
               }),
             });
-            if (result.client_secret) {
-              await fetchAPI("/(api)/ride/create", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  origin_address: userAddress,
-                  destination_address: destinationAddress,
-                  origin_latitude: userLatitude,
-                  origin_longitude: userLongitude,
-                  destination_latitude: destinationLatitude,
-                  destination_longitude: destinationLongitude,
-                  ride_time: rideTime.toFixed(0),
-                  fare_price: parseInt(amount) * 100,
-                  payment_status: "paid",
-                  driver_id: driverId,
-                  user_id: userId,
-                }),
-              });
 
+            const { result } = await response.json();
+
+            console.log(result);
+
+            if (result.client_secret) {
               intentCreationCallback({
                 clientSecret: result.client_secret,
               });
@@ -113,15 +101,46 @@ const Payment = ({
     }
   };
 
+  const savePayment = async () => {
+    await fetch("/(api)/ride/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        origin_address: userAddress,
+        destination_address: destinationAddress,
+        origin_latitude: userLatitude,
+        origin_longitude: userLongitude,
+        destination_latitude: destinationLatitude,
+        destination_longitude: destinationLongitude,
+        ride_time: rideTime.toFixed(0),
+        fare_price: parseInt(amount) * 100,
+        payment_status: "paid",
+        driver_id: driverId,
+        user_id: userId,
+      }),
+    });
+  };
+
   const openPaymentSheet = async () => {
+    console.log("Opening payment sheet");
     const { error } = await presentPaymentSheet();
 
     if (error && error.code === PaymentSheetError.Canceled) {
+      console.log("Payment cancelled");
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
+      console.log("Payment successful");
       setSuccess(true);
     }
   };
+
+  useEffect(() => {
+    if (success) {
+      savePayment();
+    }
+  }, [savePayment, success]);
 
   useEffect(() => {
     initializePaymentSheet();
